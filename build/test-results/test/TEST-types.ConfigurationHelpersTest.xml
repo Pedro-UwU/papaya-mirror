@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="types.ConfigurationHelpersTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2025-03-17T20:38:57" hostname="Pedros-MacBook-Pro-2.local" time="0.009">
+  <properties/>
+  <testcase name="Basic validation()" classname="types.ConfigurationHelpersTest" time="0.009"/>
+  <system-out><![CDATA[Valid(value=Hello=Global(name=Hi my name is, value=Hello World, category=null))
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="types.GlobalHelpersTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2025-03-17T20:38:57" hostname="Pedros-MacBook-Pro-2.local" time="0.004">
+  <properties/>
+  <testcase name="Valid name and category should validate()" classname="types.GlobalHelpersTest" time="0.001"/>
+  <testcase name="Name that starts without a letter should not be valid()" classname="types.GlobalHelpersTest" time="0.0"/>
+  <testcase name="Name with less than two characters should not be valid()" classname="types.GlobalHelpersTest" time="0.0"/>
+  <testcase name="Not setting value and category should not validate()" classname="types.GlobalHelpersTest" time="0.001"/>
+  <testcase name="Valid name and value should validate()" classname="types.GlobalHelpersTest" time="0.001"/>
+  <testcase name="Setting value and category at the same time should not validate()" classname="types.GlobalHelpersTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

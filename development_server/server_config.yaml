@@ -1,0 +1,135 @@
+options:
+  requestsPerEndpoint: 1
+  numberOfWorkers: 1 # Concurrent workers
+  openAIApiKey: ""
+
+globalParameters:
+  baseUrl:
+    value: "http://localhost:8080"
+
+endpoints:
+  create-user:
+    output:
+      "USERID": "response.userId"
+      "PASSWORD": "parameters.password"
+    url: "${baseUrl}/user"
+    method: "POST"
+    body:
+      name: "${name}"
+      username: "${username}"
+      password: "${password}"
+      email: "${email}"
+      age: "${age}"
+      surname: "${surname}"
+    response:
+      responseExtract:
+        userId: "body.user_id"
+      responseCode: 200
+    parameters:
+      name:
+        category: "name"
+        XSS: true
+        SQLInject: true
+        LongValues: true
+      username:
+        value: "JohnDoe21"
+      password:
+        category: "password"
+      email:
+        category: "email"
+      age:
+        category: "integer"
+        range:
+          from: 13
+          to: 90
+      surname:
+        category: "surname"
+        optional: true
+  create-user-2:
+    output:
+      - "USERID": "response.userid"
+    url: "${baseUrl}/user"
+    method: "POST"
+    body:
+      name: "${name}"
+      username: "${username}"
+      password: "${password}"
+      email: "${email}"
+      age: "${age}"
+      surname: "${surname}"
+    response:
+      responseExtract:
+        userId: "body.user_id"
+      responseCode: 200
+    parameters:
+      name:
+        category: "name"
+        XSS: true
+        SQLInject: true
+        LongValues: true
+      username:
+        value: "JohnDoe21"
+      password:
+        category: "password"
+      email:
+        category: "email"
+      age:
+        category: "integer"
+        range:
+          from: 13
+          to: 90
+      surname:
+        category: "surname"
+        optional: true
+
+  get-user:
+    dependsOn: "create-user"
+    url: "${baseUrl}/user"
+    method: "GET"
+    query:
+      user_id: "${{outputs.create-user.USERID}}"
+    response:
+      responseCode: 200
+
+
+  add-friend:
+    dependsOn: "create-user"
+    url: "${baseUrl}/friend"
+    method: "POST"
+    response:
+      responseCode: 200
+    body:
+      id: "${{outputs.create-user.USERID}}"
+      friends:
+        - id: "1"
+          name: "Friend 1"
+        - id: "2"
+          name: "Friend 2"
+        - id: "3"
+          name: "Friend 3"
+        - id: "4"
+          name: "Friend 4"
+
+  update-password:
+    dependsOn:
+      - "add-friend"
+      - "get-user"
+      - "create-user"
+      - "create-user-2"
+    url: "${baseUrl}/user/password"
+    method: "PATCH"
+    query:
+      user_id: "${{outputs.create-user.USERID}}"
+      old_password: "${{outputs.create-user.PASSWORD}}"
+      new_password: "${newPassword}"
+    parameters:
+      newPassword:
+        category: "password"
+
+  this-will-give-error:
+    dependsOn:
+      - "create-user"
+    url: "localhost:30000"
+    method: "GET"
+    response:
+      responseCode: 200

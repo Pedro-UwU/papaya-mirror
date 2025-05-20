@@ -1,0 +1,78 @@
+options:
+  requestsPerEndpoint: 10
+  numberOfWorkers: 4 # Concurrent workers
+
+globalParameters:
+  baseUrl:
+    value: "pf.zahnd.me"
+  profilePicture:
+    category: "avatar"
+
+endpoints:
+  create-user:
+    url: "${baseUrl}/user"
+    method: "POST"
+    body:
+      username: "${userName}"
+      password: "${password}"
+      name: "${name}"
+      surname: "${surname}"
+      timestamp: # Creation timestamp
+        value: "${timestamp}"  # If value != exists or empty -> ignore
+        optional: true
+
+    response:
+      responseCode: 200
+      responseHeader:
+        userToken:
+          fieldName: "token"
+      responseBody:
+        userId:
+          fieldName: "userId"
+
+    parameters:
+      userName:
+        category: "username"
+      password:
+        category: "password"
+      name:
+        category: "name"
+      surname:
+        category: "surname"
+      age:
+        category: "integer"
+        range: # Optional if category is integer or float
+          from: 13
+          to: 90
+
+  submit-profile-picture:
+    dependsOn: "create-user"
+    url: "${baseUrl}/profile/picture"
+    method: "POST"
+
+    headers:
+      Content-type: "application/json"
+      Authorization: "Bearer ${userToken}"
+
+    body:
+      picture: "${profilePicture}"
+
+    parameters:
+      userToken: # Must match with parent. See `response` (could be in header or body)
+        inherited: true
+
+  get-name:
+    dependsOn: "create-user"
+    url: "${baseUrl}/user"
+    method: "GET"
+
+    query:
+      username: "${userId}"
+
+    parameters:
+      userId:
+        inherited: true
+
+# inherited: sale del parent, as it is
+# value: copy & paste. NO recursivo.
+# category: to be generated
