@@ -9,7 +9,7 @@ data class Context(
     val globalParameters: Map<String, String>,
     var contextOutputs: Map<String, ContextOutput> = emptyMap(),
     var unsatisfiedDependencies: Set<String> = emptySet(),
-    var executionGraph: ExecutionGraph = ExecutionGraph()
+    var executionGraph: ExecutionGraph = ExecutionGraph(),
 )
 
 data class ContextOutput(

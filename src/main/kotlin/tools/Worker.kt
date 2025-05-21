@@ -12,12 +12,14 @@ import ar.edu.itba.pf.types.responses.ResponseDataExtractor
 import ar.edu.itba.pf.types.responses.ResponseSuccess
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
+import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.util.*
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.yield
 import kotlinx.serialization.json.*
@@ -37,26 +39,45 @@ class Worker(
     val dependencyGraph: DependencyGraph
 ) {
 
+    private val madeRequestInLastIteration = AtomicBoolean(false)
     private var executionId: String = ""
+    private var running = AtomicBoolean(false)
     private val client = HttpClient(CIO) {
         install(ContentNegotiation) {
             json()
         }
+        engine {
+            endpoint {
+                keepAliveTime = 5000
+                connectTimeout = 5000
+                socketTimeout = 5000
+                pipelining = false
+                maxConnectionsPerRoute = 100
+                maxConnectionsCount = 1000
+            }
+        }
     }
-
-    private var running = AtomicBoolean(false)
 
     suspend fun start() {
         running.set(true)
         while (running.get()) {
             yield()
-            processingRequests.getAndAdd(1)
+//            println("Increasing ${processingRequests.get()}")
             val context = queue.tryReceive().getOrNull()
-            processingRequests.getAndAdd(-1)
             if (context == null) {
+                if (madeRequestInLastIteration.get()) {
+                    processingRequests.getAndAdd(-1)
+                }
+//                println("Decreasing NULL - ${processingRequests.get()}")
+//                processingRequests.getAndAdd(-1)
+                madeRequestInLastIteration.set(false)
                 continue
             }
+            if (!madeRequestInLastIteration.get()) {
+                processingRequests.getAndAdd(1)
+            }
             run(context)
+            madeRequestInLastIteration.set(true)
         }
     }
 
@@ -78,6 +99,8 @@ class Worker(
             endpoint.query.map { (name, method) -> name to method.value.injectParameters(context) }.toMap()
         val bodyParams = processJsonObject(endpoint.body, context)
         val headers = endpoint.headers.map { (name, value) -> name to value.value }.toMap()
+
+
 
         val startInstant = Instant.now()
         val infoBlockRequestData = RequestData(headers = headers, queryParams = queryParams, body = bodyParams)
@@ -106,7 +129,6 @@ class Worker(
             return
         }
 
-
         val infoBlockResponseData = ResponseData(
             response.status.value,
             headers = response.headers.toMap(),
@@ -115,6 +137,7 @@ class Worker(
         )
 
         val stopInstant = Instant.now()
+        response.call.response.cancel()
 
         val expectedStatus = endpoint.response?.responseCode ?: 0
         if (expectedStatus != response.status.value) {

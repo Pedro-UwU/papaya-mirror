@@ -3,6 +3,7 @@ package types
 import ar.edu.itba.pf.types.Category
 import ar.edu.itba.pf.types.Global
 import ar.edu.itba.pf.types.responses.validate
+import ar.edu.itba.pf.types.validate
 import org.junit.jupiter.api.Test
 
 class GlobalHelpersTest {

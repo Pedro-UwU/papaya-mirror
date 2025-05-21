@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="types.BodyParameterHelpersTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2025-03-17T20:38:57" hostname="Pedros-MacBook-Pro-2.local" time="0.011">
+<testsuite name="types.BodyParameterHelpersTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2025-05-20T17:23:28" hostname="Pedros-MacBook-Pro-2.local" time="0.002">
   <properties/>
-  <testcase name="Valid body parameter with name and value()" classname="types.BodyParameterHelpersTest" time="0.008"/>
-  <testcase name="Name that starts without a letter should not be valid()" classname="types.BodyParameterHelpersTest" time="0.001"/>
+  <testcase name="Valid body parameter with name and value()" classname="types.BodyParameterHelpersTest" time="0.001"/>
+  <testcase name="Name that starts without a letter should not be valid()" classname="types.BodyParameterHelpersTest" time="0.0"/>
   <testcase name="Valid body parameter with name and optional value()" classname="types.BodyParameterHelpersTest" time="0.0"/>
-  <testcase name="Name with less than two characters should not be valid()" classname="types.BodyParameterHelpersTest" time="0.001"/>
+  <testcase name="Name with less than two characters should not be valid()" classname="types.BodyParameterHelpersTest" time="0.0"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

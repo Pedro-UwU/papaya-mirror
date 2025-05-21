@@ -81,6 +81,7 @@ def update_password(user_id: str, old_password: str, new_password: str):
         raise HTTPException(status_code=404, detail="User not found")
 
     if users[user_id].password != old_password:
+        print(f"User {users[user_id]}, Old Pass {old_password}")
         raise HTTPException(status_code=403, detail="Incorrect password")
 
     users[user_id].password = new_password

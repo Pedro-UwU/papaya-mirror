@@ -19,7 +19,7 @@ data class Endpoint(
     val response: Response = Response.DEFAULT,
     val parameters: Map<String, EndpointParameter> = emptyMap(),
     val contentType: String = "application/json",
-    val outputs: Map<String, String>,
+    val outputs: Map<String, String> = emptyMap(),
 ) {
     val isRoot: Boolean = dependsOn.isEmpty()
 }

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="tools.WorkerTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2025-03-17T20:38:57" hostname="Pedros-MacBook-Pro-2.local" time="0.491">
+<testsuite name="tools.WorkerTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2025-05-20T17:23:27" hostname="Pedros-MacBook-Pro-2.local" time="0.381">
   <properties/>
-  <testcase name="Simple HTTP request to real server on localhost()" classname="tools.WorkerTest" time="0.464"/>
-  <testcase name="Simple HTTP POST with body to real server on localhost()" classname="tools.WorkerTest" time="0.016"/>
-  <testcase name="Simple HTTP POST with body with form to real server on localhost()" classname="tools.WorkerTest" time="0.008"/>
+  <testcase name="Simple HTTP request to real server on localhost()" classname="tools.WorkerTest" time="0.357"/>
+  <testcase name="Simple HTTP POST with body to real server on localhost()" classname="tools.WorkerTest" time="0.015"/>
+  <testcase name="Simple HTTP POST with body with form to real server on localhost()" classname="tools.WorkerTest" time="0.006"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[SLF4J(W): No SLF4J providers were found.
 SLF4J(W): Defaulting to no-operation (NOP) logger implementation

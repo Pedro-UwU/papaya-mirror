@@ -17,7 +17,7 @@ import java.util.concurrent.atomic.AtomicInteger
 class WorkManager(
     private val configuration: Configuration,
 ) {
-    private val maximumCapacityPerWorker = 100
+    private val maximumCapacityPerWorker = 10000
 
     fun run(context: List<Context>, contextGenerator: ContextGenerator) {
         val processingRequests = AtomicInteger(0)
@@ -30,7 +30,7 @@ class WorkManager(
 
         runBlocking {
             val loggingChannel = Channel<InfoBlock>(numberOfWorkers * configuration.options.requestsPerEndpoint * maximumCapacityPerWorker)
-            val infoProcessor = InfoProcessor(loggingChannel, listOf(StdoutLogger()), processingInfoBlocks)
+            val infoProcessor = InfoProcessor(loggingChannel, listOf(MinimalLogger()), processingInfoBlocks)
 
             val infoProcessorJob = launch {
                 infoProcessor.start()
@@ -61,10 +61,14 @@ class WorkManager(
             while (processingRequests.get() > 0
                 || processingContexts.get()
                 || processingInfoBlocks.get()
-                || isDebuggerAttached()
+
             ) {
-//                println("Workers: ${processingRequests.get()} - Contexts: ${processingContexts.get()} - Info: ${processingInfoBlocks.get()}")
-                delay(10000)
+                delay(1000)
+                println("Workers: ${processingRequests.get()} - Context: ${processingContexts.get()} - Info: ${processingInfoBlocks.get()}")
+            }
+            while (isDebuggerAttached()) {
+                print("A")
+                delay(1000)
             }
 
             // Stop workers

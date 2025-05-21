@@ -2,7 +2,9 @@ package tools
 
 import ar.edu.itba.pf.tools.ContextGenerator
 import ar.edu.itba.pf.tools.Worker
+import ar.edu.itba.pf.tools.contenttype.ContentTypeHandler
 import ar.edu.itba.pf.types.*
+import ar.edu.itba.pf.types.graph.DependencyGraph
 import ar.edu.itba.pf.types.infoBlocks.InfoBlock
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.ktor.http.*
@@ -47,10 +49,12 @@ class WorkerTest {
 
     private lateinit var contextQueueMock: Channel<Context>
     private lateinit var infoBlockQueueMock: Channel<InfoBlock>
+    private lateinit var contextRegistryQueueMock: Channel<Context>
 
     @BeforeEach
     fun start() {
         contextQueueMock = mock<Channel<Context>>()
+        contextRegistryQueueMock = mock<Channel<Context>>()
         infoBlockQueueMock = Channel<InfoBlock>(10)
     }
 
@@ -70,15 +74,18 @@ class WorkerTest {
 
         val worker = Worker(
             queue = contextQueueMock,
+            contextRegistryQueue = contextRegistryQueueMock,
             configuration = config,
             processingRequests = AtomicInteger(1),
             infoBlockQueue = infoBlockQueueMock,
-            mock<ContextGenerator>()
+            contextGenerator = mock<ContextGenerator>(),
+            contentTypeHandler = ContentTypeHandler(),
+            dependencyGraph = DependencyGraph(config)
         )
         val content = mapOf(
             "port" to server_port
         )
-        val context = Context("test", content, emptySet())
+        val context = Context("test", content, emptySet(), emptyMap())
         runBlocking {
             worker.run(context)
         }
@@ -104,10 +111,13 @@ class WorkerTest {
         val config = Configuration(Options(1, 1), emptyMap(), mapOf("test" to endpoint))
         val worker = Worker(
             queue = contextQueueMock,
+            contextRegistryQueue = contextRegistryQueueMock,
             configuration = config,
             processingRequests = AtomicInteger(1),
             infoBlockQueue = infoBlockQueueMock,
-            mock<ContextGenerator>()
+            contextGenerator = mock<ContextGenerator>(),
+            contentTypeHandler = ContentTypeHandler(),
+            dependencyGraph = DependencyGraph(config)
         )
         val random_number = (0..100_000_000).random()
         val content = mapOf(
@@ -117,7 +127,7 @@ class WorkerTest {
             "userPassword" to "12345",
             "Name" to "Pedro$random_number",
         )
-        val context = Context("test", content, emptySet())
+        val context = Context("test", content, emptySet(), emptyMap())
         runBlocking {
             worker.run(context)
         }
@@ -144,10 +154,13 @@ class WorkerTest {
         val config = Configuration(Options(1, 1), emptyMap(), mapOf("test" to endpoint))
         val worker = Worker(
             queue = contextQueueMock,
+            contextRegistryQueue = contextRegistryQueueMock,
             configuration = config,
             processingRequests = AtomicInteger(1),
             infoBlockQueue = infoBlockQueueMock,
-            mock<ContextGenerator>()
+            contextGenerator = mock<ContextGenerator>(),
+            contentTypeHandler = ContentTypeHandler(),
+            dependencyGraph = DependencyGraph(config)
         )
         val random_number = (0..100_000_000).random()
         val content = mapOf(
@@ -157,7 +170,7 @@ class WorkerTest {
             "userPassword" to "12345",
             "Name" to "Pedro$random_number",
         )
-        val context = Context("test", content, emptySet())
+        val context = Context("test", content, emptySet(), emptyMap())
         runBlocking {
             worker.run(context)
         }

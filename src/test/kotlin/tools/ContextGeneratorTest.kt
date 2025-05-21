@@ -66,7 +66,7 @@ class ContextGeneratorTest {
         val endpoint2 = Endpoint(
             name = "submit-description",
             url = "http://localhost:8080/user/description",
-            dependsOn = "create-user",
+            dependsOn = listOf("create-user"),
             method = HTTPMethod.POST,
             headers = mapOf(
                 "Content-type" to HeaderParameter(name = "Content-type", value = "application/json")

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="ar.edu.itba.pf.tools.contenttype.FormUrlEncodedHandlerTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2025-03-17T20:38:53" hostname="Pedros-MacBook-Pro-2.local" time="0.067">
+<testsuite name="ar.edu.itba.pf.tools.contenttype.FormUrlEncodedHandlerTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2025-05-20T17:23:23" hostname="Pedros-MacBook-Pro-2.local" time="0.016">
   <properties/>
-  <testcase name="Given complex nested structure Return properly flattened form urlencoded string()" classname="ar.edu.itba.pf.tools.contenttype.FormUrlEncodedHandlerTest" time="0.057"/>
-  <testcase name="Given object with nested objects Return flattened form urlencoded string()" classname="ar.edu.itba.pf.tools.contenttype.FormUrlEncodedHandlerTest" time="0.001"/>
-  <testcase name="Given object with special characters Return properly encoded string()" classname="ar.edu.itba.pf.tools.contenttype.FormUrlEncodedHandlerTest" time="0.0"/>
+  <testcase name="Given complex nested structure Return properly flattened form urlencoded string()" classname="ar.edu.itba.pf.tools.contenttype.FormUrlEncodedHandlerTest" time="0.009"/>
+  <testcase name="Given object with nested objects Return flattened form urlencoded string()" classname="ar.edu.itba.pf.tools.contenttype.FormUrlEncodedHandlerTest" time="0.0"/>
+  <testcase name="Given object with special characters Return properly encoded string()" classname="ar.edu.itba.pf.tools.contenttype.FormUrlEncodedHandlerTest" time="0.001"/>
   <testcase name="Given simple object with primitive values Return valid form urlencoded string()" classname="ar.edu.itba.pf.tools.contenttype.FormUrlEncodedHandlerTest" time="0.002"/>
   <testcase name="Given object with array values Return valid form urlencoded string with repeated keys()" classname="ar.edu.itba.pf.tools.contenttype.FormUrlEncodedHandlerTest" time="0.0"/>
-  <testcase name="Given array as root Return indexed key-value pairs()" classname="ar.edu.itba.pf.tools.contenttype.FormUrlEncodedHandlerTest" time="0.002"/>
-  <testcase name="Given empty object Return empty string()" classname="ar.edu.itba.pf.tools.contenttype.FormUrlEncodedHandlerTest" time="0.001"/>
+  <testcase name="Given array as root Return indexed key-value pairs()" classname="ar.edu.itba.pf.tools.contenttype.FormUrlEncodedHandlerTest" time="0.001"/>
+  <testcase name="Given empty object Return empty string()" classname="ar.edu.itba.pf.tools.contenttype.FormUrlEncodedHandlerTest" time="0.0"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

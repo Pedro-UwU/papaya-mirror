@@ -16,7 +16,7 @@ class JsonBodyInjectorTest {
     fun `Test simple injection`() {
         val jsonElement = jsonMapper.readTree(File("src/test/resources/Jsons/simpleBody.json"))
         val values: Map<String, String> = mapOf("param" to "asd")
-        val context = Context("", values, emptySet())
+        val context = Context("", values, emptySet(), emptyMap())
         val result = processJsonObject(jsonElement, context)
         assertTrue(result != null)
         assertEquals("asd", result.get("body").textValue())
@@ -30,7 +30,7 @@ class JsonBodyInjectorTest {
         val values: Map<String, String> = mapOf(
             "param1" to "This is parameter 1", "param2" to "This is parameter 2", "param3" to "This is parameter 3"
         )
-        val context = Context("", values, emptySet())
+        val context = Context("", values, emptySet(), emptyMap())
         val result = processJsonObject(jsonElement, context)
         assertTrue(result != null)
         assertTrue(result.isArray)

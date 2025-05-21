@@ -55,17 +55,6 @@ class EndpointParameterHelpersTest {
         }
     }
 
-    @Test
-    fun `Valid endpoint with inherited value should validate`() {
-        val endpointParameter = EndpointParameter(
-            name = "name"
-        )
-
-        val validationResult = endpointParameter.validate()
-        assert(validationResult.isValid) {
-            validationResult.errors
-        }
-    }
 
     @Test
     fun `Name with less than two characters should not be valid`() {
@@ -99,18 +88,6 @@ class EndpointParameterHelpersTest {
 
         assert(!endpointParameter.validate().isValid) {
             "Value and category are mutually exclusive properties and should not validate."
-        }
-    }
-
-    @Test
-    fun `Setting value and inherited at the same time should not validate`() {
-        val endpointParameter = EndpointParameter(
-            name = "Hi my name is",
-            value = "Hello World"
-        )
-
-        assert(!endpointParameter.validate().isValid) {
-            "Value and inherited are mutually exclusive properties and should not validate."
         }
     }
 

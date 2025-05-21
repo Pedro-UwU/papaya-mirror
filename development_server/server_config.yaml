@@ -1,6 +1,6 @@
 options:
-  requestsPerEndpoint: 1
-  numberOfWorkers: 1 # Concurrent workers
+  requestsPerEndpoint: 3000
+  numberOfWorkers: 4 # Concurrent workers
   openAIApiKey: ""
 
 globalParameters:
@@ -18,7 +18,7 @@ endpoints:
       name: "${name}"
       username: "${username}"
       password: "${password}"
-      email: "${email}"
+      email: "${username}@mail.com"
       age: "${age}"
       surname: "${surname}"
     response:
@@ -115,7 +115,6 @@ endpoints:
       - "add-friend"
       - "get-user"
       - "create-user"
-      - "create-user-2"
     url: "${baseUrl}/user/password"
     method: "PATCH"
     query:

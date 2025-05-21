@@ -3,6 +3,7 @@ package types
 import ar.edu.itba.pf.types.Endpoint
 import ar.edu.itba.pf.types.HTTPMethod
 import ar.edu.itba.pf.types.responses.validate
+import ar.edu.itba.pf.types.validate
 import org.junit.jupiter.api.Test
 
 class EndpointHelpersTest {
