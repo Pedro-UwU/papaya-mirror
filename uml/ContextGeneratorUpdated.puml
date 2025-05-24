@@ -1,0 +1,28 @@
+@startuml ContextGeneratorUpdated
+
+class ContextGenerator {
+  - configuration: Configuration
+  - parameterGenerator: ParameterGenerator
+  - dependencyGraph: DependencyGraph
+  __
+  + generate(requestsPerEndpoint: Int): List<Context>
+  - createInitialContext(endpoint: Endpoint, content: Map<String, String>): Context
+  - createExecutionGraph(endpointName: String): ExecutionGraph
+  - findRootEndpoints(): Set<String>
+  - generateParametersForEndpoint(endpoint: Endpoint): Map<String, String>
+  - mergeGlobalParameters(endpointParams: Map<String, String>): Map<String, String>
+}
+
+class ParameterGenerator
+class DependencyGraph
+class ExecutionGraph
+class Context
+class Endpoint
+
+ContextGenerator --> ParameterGenerator : uses
+ContextGenerator --> DependencyGraph : uses
+ContextGenerator --> ExecutionGraph : creates
+ContextGenerator --> Context : creates
+ContextGenerator --> Endpoint : processes
+
+@enduml

@@ -17,6 +17,9 @@ repositories {
 }
 
 dependencies {
+    // Logging
+    implementation("org.slf4j:slf4j-simple:2.0.17")
+    implementation("io.github.oshai:kotlin-logging-jvm:7.0.3")
     // Clickt for CLI parsing
     implementation("com.github.ajalt.clikt:clikt:5.0.1")
     // Support for rendering markdown in help messages

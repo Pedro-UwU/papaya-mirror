@@ -1,10 +1,14 @@
 package ar.edu.itba.pf.tools
 
 import ar.edu.itba.pf.tools.contexts.ContextRegistry
+import ar.edu.itba.pf.tools.infoLoggers.InfoLoggers
 import ar.edu.itba.pf.tools.infoLoggers.MinimalLogger
 import ar.edu.itba.pf.tools.infoLoggers.StdoutLogger
+import ar.edu.itba.pf.tools.infoLoggers.TsvLogger
+import ar.edu.itba.pf.tools.infoLoggers.tools.infoLoggers.JsonLogger
 import ar.edu.itba.pf.types.Configuration
 import ar.edu.itba.pf.types.Context
+import ar.edu.itba.pf.types.InfoLogger
 import ar.edu.itba.pf.types.graph.DependencyGraph
 import ar.edu.itba.pf.types.infoBlocks.InfoBlock
 import kotlinx.coroutines.channels.Channel
@@ -24,19 +28,23 @@ class WorkManager(
         val processingContexts = AtomicBoolean(false)
         val processingInfoBlocks = AtomicBoolean(false)
 
+        val loggers = initializeLoggers(configuration)
         val numberOfWorkers = configuration.options.numberOfWorkers
         val dependencyGraph = DependencyGraph(configuration)
         dependencyGraph.reduceTransitivity()
 
         runBlocking {
-            val loggingChannel = Channel<InfoBlock>(numberOfWorkers * configuration.options.requestsPerEndpoint * maximumCapacityPerWorker)
-            val infoProcessor = InfoProcessor(loggingChannel, listOf(MinimalLogger()), processingInfoBlocks)
+            val loggingChannel =
+                Channel<InfoBlock>(numberOfWorkers * configuration.options.requestsPerEndpoint * maximumCapacityPerWorker)
+            val infoProcessor = InfoProcessor(loggingChannel, loggers, processingInfoBlocks)
 
             val infoProcessorJob = launch {
                 infoProcessor.start()
             }
-            val contextRegistryQueue = Channel<Context>(numberOfWorkers * configuration.options.requestsPerEndpoint * maximumCapacityPerWorker)
-            val contextQueue = Channel<Context>(numberOfWorkers * configuration.options.requestsPerEndpoint * maximumCapacityPerWorker)
+            val contextRegistryQueue =
+                Channel<Context>(numberOfWorkers * configuration.options.requestsPerEndpoint * maximumCapacityPerWorker)
+            val contextQueue =
+                Channel<Context>(numberOfWorkers * configuration.options.requestsPerEndpoint * maximumCapacityPerWorker)
 
             val contextRegistry = ContextRegistry(contextRegistryQueue, contextQueue, processingContexts)
             val contextRegistryJob = launch {
@@ -85,6 +93,18 @@ class WorkManager(
             infoProcessorJob.join()
             contextRegistryJob.join()
             loggingChannel.close()
+        }
+    }
+
+    private fun initializeLoggers(configuration: Configuration): List<InfoLogger> {
+        return configuration.options.loggers.mapNotNull { logger ->
+            when (logger.logger) {
+                InfoLoggers.STDOUT -> StdoutLogger()
+                InfoLoggers.MINIMAL -> MinimalLogger()
+                InfoLoggers.TSV -> TsvLogger(logger.path)
+                InfoLoggers.JSON -> JsonLogger(logger.path)
+                InfoLoggers.NONE -> null
+            }
         }
     }
 }

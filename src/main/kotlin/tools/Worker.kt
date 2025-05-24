@@ -3,6 +3,7 @@ package ar.edu.itba.pf.tools
 import ar.edu.itba.pf.tools.contenttype.ContentTypeHandler
 import ar.edu.itba.pf.tools.contexts.buildOutputs
 import ar.edu.itba.pf.types.*
+import ar.edu.itba.pf.types.Endpoint
 import ar.edu.itba.pf.types.graph.DependencyGraph
 import ar.edu.itba.pf.types.infoBlocks.ExecutionData
 import ar.edu.itba.pf.types.infoBlocks.InfoBlock
@@ -12,7 +13,6 @@ import ar.edu.itba.pf.types.responses.ResponseDataExtractor
 import ar.edu.itba.pf.types.responses.ResponseSuccess
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
-import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
@@ -24,7 +24,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.yield
 import kotlinx.serialization.json.*
 import java.time.Instant
-import java.util.UUID
+import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -99,7 +99,6 @@ class Worker(
             endpoint.query.map { (name, method) -> name to method.value.injectParameters(context) }.toMap()
         val bodyParams = processJsonObject(endpoint.body, context)
         val headers = endpoint.headers.map { (name, value) -> name to value.value }.toMap()
-
 
 
         val startInstant = Instant.now()
@@ -253,7 +252,7 @@ class Worker(
     ) {
         val endpointResponse = endpoint.response
         val extractor = ResponseDataExtractor(endpointResponse)
-        val responseData =  extractor.extractData(response)
+        val responseData = extractor.extractData(response)
         val outputs = buildOutputs(endpoint, context, responseData)
         val contextDependency = mapOf(context.current to ContextOutput(context.current, outputs))
         val updatedContexts =

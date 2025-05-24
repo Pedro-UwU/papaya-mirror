@@ -1,0 +1,30 @@
+@startuml InfoLogging
+
+interface InfoLogger {
+  + log(infoBlock: InfoBlock): Unit
+}
+
+class InfoProcessor {
+  - infoQueue: Channel<InfoBlock>
+  - loggers: List<InfoLogger>
+  - pendingRequests: AtomicInteger
+  __
+  + start(): Unit
+  - run(): Unit
+  - processInfoBlock(infoBlock: InfoBlock): Unit
+  - shouldStop(): Boolean
+}
+
+class InfoBlock {
+  + endpointName: String
+  + startTime: Long
+  + endTime: Long
+  + success: Boolean
+  + errorMessage: String?
+  + responseCode: Int?
+}
+
+InfoProcessor --> InfoLogger : uses multiple
+InfoProcessor --> InfoBlock : processes
+
+@enduml

@@ -1,0 +1,30 @@
+@startuml WorkManagerUpdated
+
+class WorkManager {
+  - contextQueue: Channel<Context>
+  - contextRegistryQueue: Channel<Context>
+  - infoQueue: Channel<InfoBlock>
+  - pendingRequests: AtomicInteger
+  - configuration: Configuration
+  - dependencyGraph: DependencyGraph
+  __
+  + run(configuration: Configuration, initialContexts: List<Context>): Unit
+  - startWorkers(): Unit
+  - startContextRegistry(): Unit
+  - startInfoProcessor(): Unit
+  - initializePendingRequests(initialContexts: List<Context>): Unit
+  - calculateTotalRequests(initialContexts: List<Context>): Int
+  - waitForCompletion(): Unit
+  - shutdown(): Unit
+}
+
+class Worker
+class ContextRegistry
+class InfoProcessor
+class Context
+
+WorkManager --> Worker : supervises multiple
+WorkManager --> ContextRegistry : coordinates
+WorkManager --> InfoProcessor : coordinates
+WorkManager --> Context : distributes
+@enduml

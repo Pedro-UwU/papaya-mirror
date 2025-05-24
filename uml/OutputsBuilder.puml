@@ -1,0 +1,22 @@
+@startuml OutputsBuilder
+
+class OutputsBuilder {
+  __
+  + buildOutputs(endpoint: Endpoint,
+                responseData: Map<String, String>,
+                contextContent: Map<String, String>): Map<String, String>
+  - resolveOutputExpression(expression: String,
+                           responseData: Map<String, String>,
+                           contextContent: Map<String, String>): String
+  - isResponseReference(expression: String): Boolean
+  - isParameterReference(expression: String): Boolean
+  - extractFromResponse(expression: String, responseData: Map<String, String>): String
+  - extractFromParameters(expression: String, contextContent: Map<String, String>): String
+}
+
+class Endpoint {
+  + output: Map<String, String>
+}
+
+OutputsBuilder --> Endpoint : uses configuration
+@enduml

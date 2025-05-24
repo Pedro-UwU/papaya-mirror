@@ -1,0 +1,27 @@
+@startuml ContextRegistry
+class ContextRegistry {
+  - incompleteContexts: MutableMap<String, MutableList<Context>>
+  - contextQueue: Channel<Context>
+  - contextRegistryQueue: Channel<Context>
+  - pendingRequests: AtomicInteger
+  __
+  + start(): Unit
+  - processContext(context: Context): Unit
+  - findCompatibleContext(context: Context): Context?
+  - mergeContexts(context1: Context, context2: Context): Context
+  - isComplete(context: Context): Boolean
+  - canMerge(context1: Context, context2: Context): Boolean
+  - updateIncompleteContexts(context: Context): Unit
+  - removeFromIncomplete(endpointName: String, context: Context): Unit
+}
+
+class Context {
+  + current: String
+  + unsatisfiedDependencies: Set<String>
+  + executionGraph: ExecutionGraph
+}
+
+ContextRegistry --> Context : processes
+ContextRegistry ..> Context : creates/merges
+
+@enduml

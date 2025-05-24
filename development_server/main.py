@@ -1,4 +1,6 @@
+import asyncio
 import logging
+import random
 from dataclasses import dataclass
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
@@ -37,7 +39,11 @@ class AddFriendsRequest:
 
 
 @app.post("/user")
-def create_user(data: CreateUserRequest):
+async def create_user(data: CreateUserRequest):
+    # Add random delay between 5-50ms (non-blocking)
+    delay = random.uniform(0.050, 0.500)  # Convert ms to seconds
+    await asyncio.sleep(delay)
+
     user_id = str(uuid4())
     users[user_id] = data
 

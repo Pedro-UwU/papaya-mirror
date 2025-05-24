@@ -1,0 +1,38 @@
+@startuml ContentTypeHandler
+interface ContentTypeHandler {
+  + processBody(body: Any?, content: Map<String, String>): String
+  + getContentType(): String
+}
+
+class JsonBodyHandler {
+  - objectMapper: ObjectMapper
+  __
+  + processBody(body: Any?, content: Map<String, String>): String
+  + getContentType(): String
+  - processJsonObject(obj: Any?, content: Map<String, String>): Any?
+  - injectParameters(value: String, content: Map<String, String>): String
+  - processMap(map: Map<String, Any?>, content: Map<String, String>): Map<String, Any?>
+  - processList(list: List<Any?>, content: Map<String, String>): List<Any?>
+}
+
+class FormUrlEncodedHandler {
+  __
+  + processBody(body: Any?, content: Map<String, String>): String
+  + getContentType(): String
+  - flattenToFormData(data: Map<String, Any?>): String
+  - processValue(value: Any?, content: Map<String, String>): String
+  - encodeFormData(key: String, value: String): String
+}
+
+class ContentTypeManager {
+  - handlers: Map<String, ContentTypeHandler>
+  __
+  + getHandler(contentType: String): ContentTypeHandler
+  + registerHandler(contentType: String, handler: ContentTypeHandler): Unit
+  + getSupportedTypes(): Set<String>
+}
+
+ContentTypeHandler <|.. JsonBodyHandler
+ContentTypeHandler <|.. FormUrlEncodedHandler
+ContentTypeManager --> ContentTypeHandler : manages
+@enduml

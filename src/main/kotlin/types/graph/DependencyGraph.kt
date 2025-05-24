@@ -2,6 +2,7 @@ package ar.edu.itba.pf.types.graph
 
 import ar.edu.itba.pf.types.Configuration
 import ar.edu.itba.pf.types.Endpoint
+import kotlin.system.exitProcess
 
 class DependencyGraph(config: Configuration) {
     private val children: HashMap<Endpoint, ArrayList<Endpoint>> = HashMap()
@@ -31,21 +32,26 @@ class DependencyGraph(config: Configuration) {
 
     fun getParents(name: String): List<String> {
         return parents.filter { (endpoint, parents) -> endpoint.name == name }
-            .map{(_, par) -> par }
+            .map { (_, par) -> par }
             .flatten()
-            .map{ it.name }
+            .map { it.name }
     }
 
     fun getChildren(name: String): List<String> {
-        return children.filter{ (endpoint, _) -> endpoint.name == name }
-            .map{(_, child) -> child}
+        return children.filter { (endpoint, _) -> endpoint.name == name }
+            .map { (_, child) -> child }
             .flatten()
-            .map{ it.name }
+            .map { it.name }
     }
 
     private fun initGraph(config: Configuration) {
         config.endpoints.forEach {
-            addEndpoint(it.value, config)
+            try {
+                addEndpoint(it.value, config)
+            } catch (_: NullPointerException) {
+                System.err.println("Invalid node in configuration. Are dependencies in order? Do you have circular dependencies?")
+                exitProcess(1)
+            }
         }
         createParentsGraph()
     }

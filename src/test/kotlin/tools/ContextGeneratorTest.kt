@@ -1,7 +1,10 @@
 package tools
 
 import ar.edu.itba.pf.tools.ContextGenerator
+import ar.edu.itba.pf.tools.infoLoggers.InfoLoggers
+import ar.edu.itba.pf.tools.infoLoggers.MinimalLogger
 import ar.edu.itba.pf.types.*
+import ar.edu.itba.pf.types.types.InfoLoggerOption
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -76,7 +79,7 @@ class ContextGeneratorTest {
         )
 
         return Configuration(
-            options = Options(1, 1),
+            options = Options(1, 1, listOf(InfoLoggerOption(InfoLoggers.MINIMAL, null))),
             globalParameters = mapOf(),
             endpoints = mapOf(
                 "create-user" to endpoint1,

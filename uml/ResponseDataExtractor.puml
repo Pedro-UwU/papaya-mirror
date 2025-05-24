@@ -1,0 +1,16 @@
+@startuml ResponseDataExtractor
+class ResponseDataExtractor {
+  - objectMapper: ObjectMapper
+  __
+  + extractData(responseBody: String, headers: Map<String, String>,
+                cookies: Map<String, String>,
+                extractionConfig: Map<String, String>): Map<String, String>
+  - extractFromBody(body: String, path: String): String?
+  - extractFromHeader(headers: Map<String, String>, path: String): String?
+  - extractFromCookie(cookies: Map<String, String>, path: String): String?
+  - navigateJsonPath(jsonNode: JsonNode, pathParts: List<String>): String?
+  - parseJsonPath(path: String): List<String>
+  - handleArrayAccess(node: JsonNode, arrayPart: String): JsonNode?
+  - handlePropertyAccess(node: JsonNode, property: String): JsonNode?
+}
+@enduml

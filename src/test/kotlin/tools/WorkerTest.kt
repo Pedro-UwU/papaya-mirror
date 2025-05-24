@@ -3,9 +3,11 @@ package tools
 import ar.edu.itba.pf.tools.ContextGenerator
 import ar.edu.itba.pf.tools.Worker
 import ar.edu.itba.pf.tools.contenttype.ContentTypeHandler
+import ar.edu.itba.pf.tools.infoLoggers.InfoLoggers
 import ar.edu.itba.pf.types.*
 import ar.edu.itba.pf.types.graph.DependencyGraph
 import ar.edu.itba.pf.types.infoBlocks.InfoBlock
+import ar.edu.itba.pf.types.types.InfoLoggerOption
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.ktor.http.*
 import kotlinx.coroutines.channels.Channel
@@ -70,7 +72,7 @@ class WorkerTest {
             url = "http://localhost:\${port}/foo",
             method = HTTPMethod.GET
         )
-        val config = Configuration(Options(1, 1), emptyMap(), mapOf("test" to endpoint))
+        val config = Configuration(Options(1, 1,listOf(InfoLoggerOption(InfoLoggers.MINIMAL, null))), emptyMap(), mapOf("test" to endpoint))
 
         val worker = Worker(
             queue = contextQueueMock,
@@ -108,7 +110,7 @@ class WorkerTest {
             ))
         )
 
-        val config = Configuration(Options(1, 1), emptyMap(), mapOf("test" to endpoint))
+        val config = Configuration(Options(1, 1,listOf(InfoLoggerOption(InfoLoggers.MINIMAL, null))), emptyMap(), mapOf("test" to endpoint))
         val worker = Worker(
             queue = contextQueueMock,
             contextRegistryQueue = contextRegistryQueueMock,
@@ -151,7 +153,7 @@ class WorkerTest {
             ))
         )
 
-        val config = Configuration(Options(1, 1), emptyMap(), mapOf("test" to endpoint))
+        val config = Configuration(Options(1, 1,listOf(InfoLoggerOption(InfoLoggers.MINIMAL, null))), emptyMap(), mapOf("test" to endpoint))
         val worker = Worker(
             queue = contextQueueMock,
             contextRegistryQueue = contextRegistryQueueMock,

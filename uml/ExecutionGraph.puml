@@ -1,0 +1,30 @@
+@startuml ExecutionGraph
+class ExecutionGraph {
+  + heads: MutableSet<ExecutionNode>
+  + leaves: MutableSet<ExecutionNode>
+  - nodes: MutableMap<String, ExecutionNode>
+  __
+  + addExecution(endpointName: String): ExecutionNode
+  + mergeWith(other: ExecutionGraph): ExecutionGraph
+  + getExecutedEndpoints(): Set<String>
+  + canMergeWith(other: ExecutionGraph): Boolean
+  + findNodeById(id: String): ExecutionNode?
+  + updateHeadsAndLeaves(): Unit
+}
+
+class ExecutionNode {
+  + id: String
+  + endpointName: String
+  + parents: MutableSet<ExecutionNode>
+  + children: MutableSet<ExecutionNode>
+  __
+  + addParent(parent: ExecutionNode): Unit
+  + addChild(child: ExecutionNode): Unit
+  + isHead(): Boolean
+  + isLeaf(): Boolean
+}
+
+ExecutionGraph *--> ExecutionNode
+ExecutionNode --> ExecutionNode : parent/child relationships
+
+@enduml

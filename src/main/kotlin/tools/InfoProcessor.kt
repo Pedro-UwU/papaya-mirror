@@ -2,11 +2,9 @@ package ar.edu.itba.pf.tools
 
 import ar.edu.itba.pf.types.InfoLogger
 import ar.edu.itba.pf.types.infoBlocks.InfoBlock
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.yield
 import java.util.concurrent.atomic.AtomicBoolean
-import java.util.concurrent.atomic.AtomicInteger
 
 class InfoProcessor(
     private val channel: Channel<InfoBlock>,
@@ -28,6 +26,7 @@ class InfoProcessor(
             }
             yield()
         }
+        stopInfoLoggers()
     }
 
     fun stop() {
@@ -36,6 +35,9 @@ class InfoProcessor(
 
     private fun processBlock(infoBlock: InfoBlock) =
         infoLoggers.forEach { logger -> logger.processBlock(infoBlock) }
+
+    private fun stopInfoLoggers() =
+        infoLoggers.forEach { logger -> logger.stop() }
 
     fun isRunning(): Boolean = running
 }

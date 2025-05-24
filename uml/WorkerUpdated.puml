@@ -1,0 +1,38 @@
+@startuml WorkerUpdated
+class Worker {
+  - contextQueue: Channel<Context>
+  - contextRegistryQueue: Channel<Context>
+  - infoQueue: Channel<InfoBlock>
+  - configuration: Configuration
+  - pendingRequests: AtomicInteger
+  - dependencyGraph: DependencyGraph
+  - httpClient: HttpClient
+  - contentTypeManager: ContentTypeManager
+  - responseDataExtractor: ResponseDataExtractor
+  - outputsBuilder: OutputsBuilder
+  __
+  + start(): Unit
+  - run(): Unit
+  - processContext(context: Context): Unit
+  - executeRequest(context: Context, endpoint: Endpoint): HttpResponse
+  - createChildContexts(context: Context, endpoint: Endpoint, extractedData: Map<String, String>): Unit
+  - prepareRequestBody(endpoint: Endpoint, context: Context): String
+  - injectParameters(template: String, context: Context): String
+  - sendInfoBlock(startTime: Long, endTime: Long, endpoint: Endpoint, success: Boolean): Unit
+}
+
+class Context
+class InfoBlock
+class DependencyGraph
+class ContentTypeManager
+class ResponseDataExtractor
+class OutputsBuilder
+
+Worker --> Context : processes
+Worker --> InfoBlock : creates
+Worker --> DependencyGraph : uses
+Worker --> ContentTypeManager : uses
+Worker --> ResponseDataExtractor : uses
+Worker --> OutputsBuilder : uses
+
+@enduml

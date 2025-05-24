@@ -1,0 +1,15 @@
+@startuml Cli
+class Cli {
+  - configPath: String
+  __
+  + run(): Unit
+  - loadConfiguration(): Configuration
+  - validateConfiguration(config: Configuration): Unit
+  - validateDependencies(endpoints: Map<String, Endpoint>): Unit
+  - validateJsonPaths(endpoints: Map<String, Endpoint>): Unit
+  - createDependencyGraph(endpoints: Map<String, Endpoint>): DependencyGraph
+  - generateInitialContexts(config: Configuration): List<Context>
+  - startWorkManager(config: Configuration, contexts: List<Context>): Unit
+}
+
+@enduml

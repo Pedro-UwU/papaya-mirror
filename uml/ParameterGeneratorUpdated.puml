@@ -1,0 +1,44 @@
+@startuml ParameterGeneratorUpdated
+
+class ParameterGenerator {
+  - usedUsernames: MutableSet<String>
+  - usedEmails: MutableSet<String>
+  - random: Random
+  - namesList: List<String>
+  - surnamesList: List<String>
+  - usernamesList: List<String>
+  - passwordsList: List<String>
+  - emailDomains: List<String>
+  __
+  + generateParameter(parameter: Parameter): String
+  - generateByCategory(category: Category, parameter: Parameter): String
+  - generateInteger(range: IntRange?): String
+  - generateFloat(range: IntRange?): String
+  - generateUnique(category: Category): String
+  - generateOptional(parameter: Parameter): String?
+  - generateFromOptions(options: List<String>): String
+  - loadResourceFiles(): Unit
+}
+
+enum Category {
+  USERNAME
+  NAME
+  SURNAME
+  EMAIL
+  PASSWORD
+  INTEGER
+  FLOAT
+}
+
+class Parameter {
+  + category: Category
+  + optional: Boolean
+  + unique: Boolean
+  + range: IntRange?
+  + options: List<String>
+}
+
+ParameterGenerator --> Category : generates by
+ParameterGenerator --> Parameter : processes
+
+@enduml

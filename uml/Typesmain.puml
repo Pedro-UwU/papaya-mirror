@@ -1,0 +1,74 @@
+@startuml TypesMain
+class Configuration {
+  + options: Options
+  + globalParameters: Map<String, Global>
+  + endpoints: Map<String, Endpoint>
+}
+
+class Options {
+  + requestsPerEndpoint: Int
+  + numberOfWorkers: Int
+}
+
+class Global {
+  + name: String
+  + value: String?
+  + category: Category?
+}
+
+class Endpoint {
+  + name: String
+  + url: String
+  + method: String
+  + contentType: String
+  + dependsOn: Set<String>
+  + headers: Map<String, String>
+  + query: Map<String, String>
+  + body: Any?
+  + parameters: Map<String, Parameter>
+  + output: Map<String, String>
+  + response: ResponseConfig?
+}
+
+class Parameter {
+  + category: Category
+  + optional: Boolean
+  + unique: Boolean
+  + range: IntRange?
+  + options: List<String>
+}
+
+class ResponseConfig {
+  + responseCode: Int
+  + responseExtract: Map<String, String>
+}
+
+class Context {
+  + current: String
+  + content: Map<String, String>
+  + globalParameters: Map<String, String>
+  + contextOutputs: Map<String, String>
+  + unsatisfiedDependencies: Set<String>
+  + executionGraph: ExecutionGraph
+}
+
+enum Category {
+  USERNAME
+  NAME
+  SURNAME
+  EMAIL
+  PASSWORD
+  INTEGER
+  FLOAT
+}
+
+Configuration *--> Options
+Configuration *--> Global
+Configuration *--> Endpoint
+Endpoint *--> Parameter
+Endpoint *--> ResponseConfig
+Parameter --> Category
+Context --> ExecutionGraph
+
+
+@enduml

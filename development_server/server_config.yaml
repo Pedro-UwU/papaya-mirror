@@ -1,7 +1,13 @@
 options:
-  requestsPerEndpoint: 3000
-  numberOfWorkers: 4 # Concurrent workers
-  openAIApiKey: ""
+  requestsPerEndpoint: 3
+  numberOfWorkers: 1 # Concurrent workers
+  loggers:
+    - stdout
+    - minimal
+    - tsv:
+        output: "./output.tsv"
+    - json:
+        output: "./output.json"
 
 globalParameters:
   baseUrl:
@@ -28,9 +34,6 @@ endpoints:
     parameters:
       name:
         category: "name"
-        XSS: true
-        SQLInject: true
-        LongValues: true
       username:
         value: "JohnDoe21"
       password:
@@ -64,9 +67,6 @@ endpoints:
     parameters:
       name:
         category: "name"
-        XSS: true
-        SQLInject: true
-        LongValues: true
       username:
         value: "JohnDoe21"
       password:

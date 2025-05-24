@@ -1,0 +1,264 @@
+@startuml GlobalSystem
+
+' ========== ENTRY POINT ==========
+class Cli {
+  - configPath: String
+  + run(): Unit
+  - loadConfiguration(): Configuration
+  - validateConfiguration(config: Configuration): Unit
+  - createDependencyGraph(endpoints: Map<String, Endpoint>): DependencyGraph
+  - generateInitialContexts(config: Configuration): List<Context>
+  - startWorkManager(config: Configuration, contexts: List<Context>): Unit
+}
+
+' ========== CONFIGURATION ==========
+class Configuration {
+  + options: Options
+  + globalParameters: Map<String, Global>
+  + endpoints: Map<String, Endpoint>
+}
+
+class Options {
+  + requestsPerEndpoint: Int
+  + numberOfWorkers: Int
+}
+
+class Endpoint {
+  + name: String
+  + url: String
+  + method: String
+  + contentType: String
+  + dependsOn: Set<String>
+  + headers: Map<String, String>
+  + query: Map<String, String>
+  + body: Any?
+  + parameters: Map<String, Parameter>
+  + output: Map<String, String>
+  + response: ResponseConfig?
+}
+
+class Parameter {
+  + category: Category
+  + optional: Boolean
+  + unique: Boolean
+  + range: IntRange?
+  + options: List<String>
+}
+
+class ResponseConfig {
+  + responseCode: Int
+  + responseExtract: Map<String, String>
+}
+
+enum Category {
+  USERNAME
+  NAME
+  SURNAME
+  EMAIL
+  PASSWORD
+  INTEGER
+  FLOAT
+  CURRENCY
+  TIMESTAMP
+}
+
+' ========== CORE RUNTIME ==========
+class Context {
+  + current: String
+  + content: Map<String, String>
+  + globalParameters: Map<String, String>
+  + contextOutputs: Map<String, String>
+  + unsatisfiedDependencies: Set<String>
+  + executionGraph: ExecutionGraph
+}
+
+class WorkManager {
+  - contextQueue: Channel<Context>
+  - contextRegistryQueue: Channel<Context>
+  - infoQueue: Channel<InfoBlock>
+  - pendingRequests: AtomicInteger
+  + run(configuration: Configuration, initialContexts: List<Context>): Unit
+  - startWorkers(): Unit
+  - startContextRegistry(): Unit
+  - startInfoProcessor(): Unit
+}
+
+class Worker {
+  - contextQueue: Channel<Context>
+  - contextRegistryQueue: Channel<Context>
+  - infoQueue: Channel<InfoBlock>
+  - httpClient: HttpClient
+  + start(): Unit
+  - processContext(context: Context): Unit
+  - executeRequest(context: Context, endpoint: Endpoint): HttpResponse
+  - createChildContexts(context: Context, endpoint: Endpoint, extractedData: Map<String, String>): Unit
+}
+
+class ContextRegistry {
+  - incompleteContexts: MutableMap<String, MutableList<Context>>
+  - contextQueue: Channel<Context>
+  - contextRegistryQueue: Channel<Context>
+  + start(): Unit
+  - processContext(context: Context): Unit
+  - findCompatibleContext(context: Context): Context?
+  - mergeContexts(context1: Context, context2: Context): Context
+}
+
+' ========== GRAPHS ==========
+class DependencyGraph {
+  - adjacencyMatrix: Array<BooleanArray>
+  - endpointToIndex: Map<String, Int>
+  + getParents(endpoint: String): Set<String>
+  + getChildren(endpoint: String): Set<String>
+  + transitiveReduction(): DependencyGraph
+  + isReachable(from: String, to: String): Boolean
+}
+
+class ExecutionGraph {
+  + heads: MutableSet<ExecutionNode>
+  + leaves: MutableSet<ExecutionNode>
+  - nodes: MutableMap<String, ExecutionNode>
+  + addExecution(endpointName: String): ExecutionNode
+  + mergeWith(other: ExecutionGraph): ExecutionGraph
+  + canMergeWith(other: ExecutionGraph): Boolean
+}
+
+class ExecutionNode {
+  + id: String
+  + endpointName: String
+  + parents: MutableSet<ExecutionNode>
+  + children: MutableSet<ExecutionNode>
+}
+
+' ========== CONTENT HANDLING ==========
+interface ContentTypeHandler {
+  + processBody(body: Any?, content: Map<String, String>): String
+  + getContentType(): String
+}
+
+class JsonBodyHandler {
+  + processBody(body: Any?, content: Map<String, String>): String
+  + getContentType(): String
+  - processJsonObject(obj: Any?, content: Map<String, String>): Any?
+}
+
+class FormUrlEncodedHandler {
+  + processBody(body: Any?, content: Map<String, String>): String
+  + getContentType(): String
+  - flattenToFormData(data: Map<String, Any?>): String
+}
+
+class ContentTypeManager {
+  - handlers: Map<String, ContentTypeHandler>
+  + getHandler(contentType: String): ContentTypeHandler
+}
+
+' ========== DATA PROCESSING ==========
+class ResponseDataExtractor {
+  + extractData(responseBody: String, headers: Map<String, String>,
+                cookies: Map<String, String>,
+                extractionConfig: Map<String, String>): Map<String, String>
+  - extractFromBody(body: String, path: String): String?
+  - navigateJsonPath(jsonNode: JsonNode, pathParts: List<String>): String?
+}
+
+class OutputsBuilder {
+  + buildOutputs(endpoint: Endpoint,
+                responseData: Map<String, String>,
+                contextContent: Map<String, String>): Map<String, String>
+  - resolveOutputExpression(expression: String): String
+}
+
+class ContextGenerator {
+  - configuration: Configuration
+  - parameterGenerator: ParameterGenerator
+  - dependencyGraph: DependencyGraph
+  + generate(requestsPerEndpoint: Int): List<Context>
+  - createInitialContext(endpoint: Endpoint, content: Map<String, String>): Context
+}
+
+class ParameterGenerator {
+  - usedUsernames: MutableSet<String>
+  - usedEmails: MutableSet<String>
+  + generateParameter(parameter: Parameter): String
+  - generateByCategory(category: Category, parameter: Parameter): String
+  - generateUnique(category: Category): String
+}
+
+' ========== LOGGING ==========
+interface InfoLogger {
+  + log(infoBlock: InfoBlock): Unit
+}
+
+class MinimalLogger {
+  + log(infoBlock: InfoBlock): Unit
+}
+
+class InfoProcessor {
+  - infoQueue: Channel<InfoBlock>
+  - loggers: List<InfoLogger>
+  + start(): Unit
+  - processInfoBlock(infoBlock: InfoBlock): Unit
+}
+
+class InfoBlock {
+  + endpointName: String
+  + startTime: Long
+  + endTime: Long
+  + success: Boolean
+  + responseCode: Int?
+}
+
+' ========== RELATIONSHIPS ==========
+
+' Entry and Configuration
+Cli --> Configuration : loads
+Cli --> WorkManager : starts
+Cli --> DependencyGraph : creates
+Cli --> ContextGenerator : uses
+
+Configuration *--> Options
+Configuration *--> Endpoint
+Endpoint *--> Parameter
+Endpoint *--> ResponseConfig
+Parameter --> Category
+
+' Core Runtime Flow
+WorkManager --> Worker : supervises multiple
+WorkManager --> ContextRegistry : coordinates
+WorkManager --> InfoProcessor : coordinates
+WorkManager --> Context : distributes
+
+Worker --> Context : processes
+Worker --> ContextRegistry : sends incomplete contexts
+Worker --> InfoBlock : creates
+Worker --> ContentTypeManager : uses
+Worker --> ResponseDataExtractor : uses
+Worker --> OutputsBuilder : uses
+
+ContextRegistry --> Context : merges/processes
+Context *--> ExecutionGraph : contains
+
+' Graph Structures
+ExecutionGraph *--> ExecutionNode : contains
+ExecutionNode --> ExecutionNode : parent/child
+DependencyGraph --> Endpoint : analyzes dependencies
+
+' Content Type System
+ContentTypeHandler <|.. JsonBodyHandler
+ContentTypeHandler <|.. FormUrlEncodedHandler
+ContentTypeManager --> ContentTypeHandler : manages
+
+' Generation System
+ContextGenerator --> ParameterGenerator : uses
+ContextGenerator --> DependencyGraph : uses
+ContextGenerator --> Context : creates
+ParameterGenerator --> Parameter : processes
+ParameterGenerator --> Category : generates by
+
+' Logging System
+InfoLogger <|.. MinimalLogger
+InfoProcessor --> InfoLogger : uses
+InfoProcessor --> InfoBlock : processes
+
+@enduml
